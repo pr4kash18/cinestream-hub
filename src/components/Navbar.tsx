@@ -21,33 +21,20 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass-heavy">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-2xl font-extrabold text-gradient tracking-tight">
-              CINESTREAM
-            </span>
+            <span className="text-2xl font-extrabold text-gradient tracking-tight">CINESTREAM</span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Home
-            </Link>
-            <Link to="/browse" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Browse
-            </Link>
-            <Link to="/browse?filter=free" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Free
-            </Link>
-            <Link to="/browse?filter=premium" className="text-sm font-medium text-gold hover:text-gold/80 transition-colors flex items-center gap-1">
-              <Crown className="w-3.5 h-3.5" />
-              Premium
+            <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Home</Link>
+            <Link to="/browse" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Browse</Link>
+            <Link to="/free" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Free</Link>
+            <Link to="/premium" className="text-sm font-medium text-gold hover:text-gold/80 transition-colors flex items-center gap-1">
+              <Crown className="w-3.5 h-3.5" /> Premium
             </Link>
           </div>
 
-          {/* Right side */}
           <div className="flex items-center gap-3">
-            {/* Search */}
             {searchOpen ? (
               <form onSubmit={handleSearch} className="flex items-center animate-scale-in">
                 <input
@@ -58,50 +45,35 @@ const Navbar = () => {
                   autoFocus
                   className="bg-secondary/80 border border-border rounded-lg px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary w-48 sm:w-64"
                 />
-                <button
-                  type="button"
-                  onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                  className="ml-2 text-muted-foreground hover:text-foreground"
-                >
+                <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(""); }} className="ml-2 text-muted-foreground hover:text-foreground">
                   <X className="w-4 h-4" />
                 </button>
               </form>
             ) : (
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-              >
+              <button onClick={() => setSearchOpen(true)} className="p-2 text-muted-foreground hover:text-foreground transition-colors">
                 <Search className="w-5 h-5" />
               </button>
             )}
-
             <button className="p-2 text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
               <Bell className="w-5 h-5" />
             </button>
-
             <button className="p-2 text-muted-foreground hover:text-foreground transition-colors">
               <User className="w-5 h-5" />
             </button>
-
-            {/* Mobile menu */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-muted-foreground hover:text-foreground md:hidden"
-            >
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-muted-foreground hover:text-foreground md:hidden">
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden glass-heavy border-t border-border animate-fade-in">
           <div className="px-4 py-3 space-y-2">
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Home</Link>
             <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Browse</Link>
-            <Link to="/browse?filter=free" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Free</Link>
-            <Link to="/browse?filter=premium" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-gold flex items-center gap-1">
+            <Link to="/free" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Free</Link>
+            <Link to="/premium" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-gold flex items-center gap-1">
               <Crown className="w-3.5 h-3.5" /> Premium
             </Link>
           </div>

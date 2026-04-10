@@ -12,29 +12,29 @@ const Footer = () => (
           <h4 className="font-semibold text-sm mb-3 text-foreground">Browse</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
             <Link to="/browse" className="block hover:text-foreground transition-colors">All Movies</Link>
-            <Link to="/browse?filter=free" className="block hover:text-foreground transition-colors">Free Content</Link>
-            <Link to="/browse?filter=premium" className="block hover:text-foreground transition-colors">Premium</Link>
+            <Link to="/free" className="block hover:text-foreground transition-colors">Free Content</Link>
+            <Link to="/premium" className="block hover:text-foreground transition-colors">Premium</Link>
           </div>
         </div>
         <div>
           <h4 className="font-semibold text-sm mb-3 text-foreground">Genres</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
-            <Link to="/browse?genre=Action" className="block hover:text-foreground transition-colors">Action</Link>
-            <Link to="/browse?genre=Sci-Fi" className="block hover:text-foreground transition-colors">Sci-Fi</Link>
-            <Link to="/browse?genre=Drama" className="block hover:text-foreground transition-colors">Drama</Link>
+            <Link to="/genre/Action" className="block hover:text-foreground transition-colors">Action</Link>
+            <Link to="/genre/Sci-Fi" className="block hover:text-foreground transition-colors">Sci-Fi</Link>
+            <Link to="/genre/Drama" className="block hover:text-foreground transition-colors">Drama</Link>
           </div>
         </div>
         <div>
           <h4 className="font-semibold text-sm mb-3 text-foreground">Legal</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
-            <span className="block">Privacy Policy</span>
-            <span className="block">Terms of Service</span>
-            <span className="block">Contact</span>
+            <Link to="/privacy" className="block hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="block hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link to="/contact" className="block hover:text-foreground transition-colors">Contact</Link>
           </div>
         </div>
       </div>
       <div className="mt-8 pt-8 border-t border-border text-center text-xs text-muted-foreground">
-        © 2024 CineStream. All rights reserved.
+        © 2026 CineStream. All rights reserved.
       </div>
     </div>
   </footer>
