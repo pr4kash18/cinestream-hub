@@ -5,8 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
+import Free from "./pages/Free";
+import Premium from "./pages/Premium";
+import Genre from "./pages/Genre";
 import MovieDetail from "./pages/MovieDetail";
 import SearchResults from "./pages/SearchResults";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,8 +26,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/browse" element={<Browse />} />
+          <Route path="/free" element={<Free />} />
+          <Route path="/premium" element={<Premium />} />
+          <Route path="/genre/:name" element={<Genre />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
