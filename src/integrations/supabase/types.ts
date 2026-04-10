@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      movies: {
+        Row: {
+          backdrop_url: string | null
+          cast_members: string[] | null
+          created_at: string
+          description: string | null
+          director: string | null
+          duration: string | null
+          genre: string[] | null
+          id: string
+          language: string | null
+          likes: number | null
+          quality: string[] | null
+          rating: number | null
+          thumbnail: string | null
+          title: string
+          trailer_url: string | null
+          type: string
+          video_url: string | null
+          views: number | null
+          year: number | null
+        }
+        Insert: {
+          backdrop_url?: string | null
+          cast_members?: string[] | null
+          created_at?: string
+          description?: string | null
+          director?: string | null
+          duration?: string | null
+          genre?: string[] | null
+          id?: string
+          language?: string | null
+          likes?: number | null
+          quality?: string[] | null
+          rating?: number | null
+          thumbnail?: string | null
+          title: string
+          trailer_url?: string | null
+          type?: string
+          video_url?: string | null
+          views?: number | null
+          year?: number | null
+        }
+        Update: {
+          backdrop_url?: string | null
+          cast_members?: string[] | null
+          created_at?: string
+          description?: string | null
+          director?: string | null
+          duration?: string | null
+          genre?: string[] | null
+          id?: string
+          language?: string | null
+          likes?: number | null
+          quality?: string[] | null
+          rating?: number | null
+          thumbnail?: string | null
+          title?: string
+          trailer_url?: string | null
+          type?: string
+          video_url?: string | null
+          views?: number | null
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
