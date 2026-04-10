@@ -1,16 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/Navbar";
+import HeroBanner from "@/components/HeroBanner";
+import MovieSlider from "@/components/MovieSlider";
+import Footer from "@/components/Footer";
+import { movies, trendingMovies, premiumMovies, freeMovies, newReleases, getMoviesByGenre } from "@/data/movies";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const heroMovie = movies[1]; // Neon Dreams
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <HeroBanner movie={heroMovie} />
+      <div className="-mt-16 relative z-10">
+        <MovieSlider title="🔥 Trending Now" movies={trendingMovies} accent />
+        <MovieSlider title="New Releases" movies={newReleases} />
+        <MovieSlider title="Free to Watch" movies={freeMovies} />
+        <MovieSlider title="⭐ Premium Collection" movies={premiumMovies} />
+        <MovieSlider title="Action & Thriller" movies={getMoviesByGenre("Action")} />
+        <MovieSlider title="Sci-Fi & Fantasy" movies={getMoviesByGenre("Sci-Fi")} />
+        <MovieSlider title="Drama" movies={getMoviesByGenre("Drama")} />
+      </div>
+      <Footer />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
