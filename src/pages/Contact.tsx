@@ -26,7 +26,8 @@ const Contact = () => {
     setSending(true);
     try {
       const id = crypto.randomUUID();
-      const { error } = await supabase.from("contact_messages").insert([{ id, ...parsed.data }]);
+      const { name, email, message } = parsed.data;
+      const { error } = await supabase.from("contact_messages").insert([{ id, name, email, message }]);
       if (error) throw error;
 
       // Best-effort email to admin (works once email infra is configured)
