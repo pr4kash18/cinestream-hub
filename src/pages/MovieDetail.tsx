@@ -112,13 +112,27 @@ const MovieDetail = () => {
               <button className="inline-flex items-center gap-2 px-8 py-3 rounded-lg gradient-cinematic text-primary-foreground font-semibold shadow-glow hover:opacity-90 transition-opacity">
                 <Play className="w-5 h-5 fill-current" /> Watch Now
               </button>
-              <button className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
-                <Download className="w-5 h-5" /> Download {selectedQuality}
+              <button onClick={() => setDownloadOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
+                <Download className="w-5 h-5" /> Download
               </button>
-              <button onClick={() => setLiked(!liked)} className={`p-3 rounded-lg glass transition-colors ${liked ? "text-primary" : "hover:bg-secondary/50"}`}>
-                <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
+              <button
+                onClick={() => {
+                  if (!user) { navigate("/auth"); return; }
+                  toggle.mutate({ movieId: movie.id, isIn });
+                }}
+                disabled={toggle.isPending}
+                title={isIn ? "Remove from My List" : "Save to My List"}
+                className={`p-3 rounded-lg glass transition-colors ${isIn ? "text-primary" : "hover:bg-secondary/50"}`}
+              >
+                {toggle.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Heart className={`w-5 h-5 ${isIn ? "fill-current" : ""}`} />}
               </button>
-              <button className="p-3 rounded-lg glass hover:bg-secondary/50 transition-colors">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied");
+                }}
+                className="p-3 rounded-lg glass hover:bg-secondary/50 transition-colors"
+              >
                 <Share2 className="w-5 h-5" />
               </button>
             </div>
