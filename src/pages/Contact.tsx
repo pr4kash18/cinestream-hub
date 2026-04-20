@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -7,22 +7,12 @@ const Contact = () => (
     <Navbar />
     <div className="pt-24 px-4 sm:px-8 lg:px-16 max-w-[800px] mx-auto">
       <h1 className="text-3xl sm:text-4xl font-extrabold mb-6">Contact Us</h1>
-      <div className="grid gap-6 md:grid-cols-3 mb-10">
-        <div className="glass rounded-xl p-6 text-center">
-          <Mail className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <h3 className="font-semibold text-sm mb-1">Email</h3>
-          <p className="text-xs text-muted-foreground">support@cinestream.com</p>
-        </div>
-        <div className="glass rounded-xl p-6 text-center">
-          <Phone className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <h3 className="font-semibold text-sm mb-1">Phone</h3>
-          <p className="text-xs text-muted-foreground">+1 (800) CINE-NOW</p>
-        </div>
-        <div className="glass rounded-xl p-6 text-center">
-          <MapPin className="w-6 h-6 mx-auto mb-2 text-primary" />
-          <h3 className="font-semibold text-sm mb-1">Office</h3>
-          <p className="text-xs text-muted-foreground">Los Angeles, CA</p>
-        </div>
+      <div className="glass rounded-xl p-6 mb-10 text-center">
+        <Mail className="w-7 h-7 mx-auto mb-3 text-primary" />
+        <h3 className="font-semibold text-base mb-1">Email</h3>
+        <a href="mailto:cpchoubisa18@gmail.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+          cpchoubisa18@gmail.com
+        </a>
       </div>
       <div className="glass rounded-xl p-6">
         <h2 className="text-lg font-bold mb-4">Send a Message</h2>

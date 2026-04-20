@@ -1,12 +1,23 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Bell, User, Menu, X, Crown } from "lucide-react";
+import { Search, Bell, User, Menu, X, Crown, LogOut, LogIn, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +27,14 @@ const Navbar = () => {
       setSearchQuery("");
     }
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+    navigate("/");
+  };
+
+  const initial = (user?.user_metadata?.full_name || user?.email || "U").charAt(0).toUpperCase();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-heavy">
@@ -34,7 +53,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {searchOpen ? (
               <form onSubmit={handleSearch} className="flex items-center animate-scale-in">
                 <input
@@ -54,12 +73,64 @@ const Navbar = () => {
                 <Search className="w-5 h-5" />
               </button>
             )}
-            <button className="p-2 text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-muted-foreground hover:text-foreground transition-colors">
-              <User className="w-5 h-5" />
-            </button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 text-muted-foreground hover:text-foreground transition-colors hidden sm:block relative">
+                  <Bell className="w-5 h-5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                  You're all caught up 🎬
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1 text-muted-foreground hover:text-foreground transition-colors">
+                  {user ? (
+                    <div className="w-8 h-8 rounded-full gradient-cinematic flex items-center justify-center text-xs font-bold text-primary-foreground">
+                      {initial}
+                    </div>
+                  ) : (
+                    <User className="w-5 h-5" />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {user ? (
+                  <>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="text-sm font-semibold truncate">{user.user_metadata?.full_name || "User"}</div>
+                      <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => navigate("/admin")}>
+                        <Shield className="w-4 h-4 mr-2" /> Admin Panel
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="w-4 h-4 mr-2" /> Sign out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => navigate("/auth")}>
+                      <LogIn className="w-4 h-4 mr-2" /> Sign in
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/auth")}>
+                      <User className="w-4 h-4 mr-2" /> Create account
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-muted-foreground hover:text-foreground md:hidden">
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
