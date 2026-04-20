@@ -20,6 +20,7 @@ export interface DbMovie {
   views: number;
   likes: number;
   trailer_url: string | null;
+  video_urls: Record<string, string> | null;
   created_at: string;
 }
 
