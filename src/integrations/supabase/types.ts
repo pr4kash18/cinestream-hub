@@ -33,6 +33,7 @@ export type Database = {
           trailer_url: string | null
           type: string
           video_url: string | null
+          video_urls: Json
           views: number | null
           year: number | null
         }
@@ -54,6 +55,7 @@ export type Database = {
           trailer_url?: string | null
           type?: string
           video_url?: string | null
+          video_urls?: Json
           views?: number | null
           year?: number | null
         }
@@ -75,6 +77,7 @@ export type Database = {
           trailer_url?: string | null
           type?: string
           video_url?: string | null
+          video_urls?: Json
           views?: number | null
           year?: number | null
         }
