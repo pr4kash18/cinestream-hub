@@ -1,18 +1,28 @@
-import { useParams, Link } from "react-router-dom";
-import { Play, Download, Heart, Share2, Star, Crown, Clock, Globe, Monitor, ArrowLeft, ThumbsUp, MessageSquare } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Play, Download, Heart, Share2, Star, Crown, Clock, Globe, Monitor, ArrowLeft, ThumbsUp, MessageSquare, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MovieSlider from "@/components/MovieSlider";
 import Footer from "@/components/Footer";
 import { useMovie, useMovies } from "@/hooks/useMovies";
 import { dbToMovie } from "@/lib/movieUtils";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
+import { toast } from "sonner";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 
 const MovieDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: dbMovie, isLoading } = useMovie(id || "");
   const { data: allMovies } = useMovies();
-  const [liked, setLiked] = useState(false);
+  const { user } = useAuth();
+  const { data: watchlistIds } = useWatchlistIds();
+  const toggle = useToggleWatchlist();
   const [selectedQuality, setSelectedQuality] = useState("1080p");
+  const [downloadOpen, setDownloadOpen] = useState(false);
 
   if (isLoading) {
     return (
