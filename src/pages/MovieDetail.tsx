@@ -1,18 +1,28 @@
-import { useParams, Link } from "react-router-dom";
-import { Play, Download, Heart, Share2, Star, Crown, Clock, Globe, Monitor, ArrowLeft, ThumbsUp, MessageSquare } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Play, Download, Heart, Share2, Star, Crown, Clock, Globe, Monitor, ArrowLeft, ThumbsUp, MessageSquare, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MovieSlider from "@/components/MovieSlider";
 import Footer from "@/components/Footer";
 import { useMovie, useMovies } from "@/hooks/useMovies";
 import { dbToMovie } from "@/lib/movieUtils";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
+import { toast } from "sonner";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 
 const MovieDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: dbMovie, isLoading } = useMovie(id || "");
   const { data: allMovies } = useMovies();
-  const [liked, setLiked] = useState(false);
+  const { user } = useAuth();
+  const { data: watchlistIds } = useWatchlistIds();
+  const toggle = useToggleWatchlist();
   const [selectedQuality, setSelectedQuality] = useState("1080p");
+  const [downloadOpen, setDownloadOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -40,6 +50,29 @@ const MovieDetail = () => {
   const relatedMovies = (allMovies || [])
     .filter((m) => m.id !== movie.id && (m.genre || []).some((g) => movie.genres.includes(g)))
     .map(dbToMovie);
+
+  const isIn = !!watchlistIds?.has(movie.id);
+  const videoUrls = (movie.videoUrls || {}) as Record<string, string>;
+  const availableQualities = movie.quality.filter((q) => videoUrls[q]);
+  const fallbackUrl = movie.videoUrl;
+
+  const triggerDownload = (q: string) => {
+    const url = videoUrls[q] || fallbackUrl;
+    if (!url) {
+      toast.error("This movie has no downloadable file yet.");
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${movie.title} [${q}]`;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setDownloadOpen(false);
+    toast.success(`Downloading ${q}...`);
+  };
 
   const formatViews = (n: number) =>
     n >= 1000000 ? `${(n / 1000000).toFixed(1)}M` : `${(n / 1000).toFixed(0)}K`;
@@ -102,13 +135,27 @@ const MovieDetail = () => {
               <button className="inline-flex items-center gap-2 px-8 py-3 rounded-lg gradient-cinematic text-primary-foreground font-semibold shadow-glow hover:opacity-90 transition-opacity">
                 <Play className="w-5 h-5 fill-current" /> Watch Now
               </button>
-              <button className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
-                <Download className="w-5 h-5" /> Download {selectedQuality}
+              <button onClick={() => setDownloadOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
+                <Download className="w-5 h-5" /> Download
               </button>
-              <button onClick={() => setLiked(!liked)} className={`p-3 rounded-lg glass transition-colors ${liked ? "text-primary" : "hover:bg-secondary/50"}`}>
-                <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
+              <button
+                onClick={() => {
+                  if (!user) { navigate("/auth"); return; }
+                  toggle.mutate({ movieId: movie.id, isIn });
+                }}
+                disabled={toggle.isPending}
+                title={isIn ? "Remove from My List" : "Save to My List"}
+                className={`p-3 rounded-lg glass transition-colors ${isIn ? "text-primary" : "hover:bg-secondary/50"}`}
+              >
+                {toggle.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Heart className={`w-5 h-5 ${isIn ? "fill-current" : ""}`} />}
               </button>
-              <button className="p-3 rounded-lg glass hover:bg-secondary/50 transition-colors">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied");
+                }}
+                className="p-3 rounded-lg glass hover:bg-secondary/50 transition-colors"
+              >
                 <Share2 className="w-5 h-5" />
               </button>
             </div>
@@ -139,6 +186,34 @@ const MovieDetail = () => {
           <MovieSlider title="You Might Also Like" movies={relatedMovies} />
         </div>
       )}
+
+      <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Download {movie.title}</DialogTitle>
+            <DialogDescription>Choose a quality to save this movie to your device.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 mt-2">
+            {(availableQualities.length ? availableQualities : movie.quality).map((q) => {
+              const has = !!(videoUrls[q] || fallbackUrl);
+              return (
+                <button
+                  key={q}
+                  onClick={() => triggerDownload(q)}
+                  disabled={!has}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg bg-secondary hover:bg-accent disabled:opacity-40 transition-colors"
+                >
+                  <span className="flex items-center gap-2 font-semibold text-sm">
+                    <Monitor className="w-4 h-4" /> {q}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{has ? "Download →" : "Not available"}</span>
+                </button>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );

@@ -16,6 +16,8 @@ export interface Movie {
   trailerUrl?: string;
   views: number;
   likes: number;
+  videoUrl?: string;
+  videoUrls?: Record<string, string>;
 }
 
 export const genres = [

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Bell, User, Menu, X, Crown, LogOut, LogIn, Shield } from "lucide-react";
+import { Search, Bell, User, Menu, X, Crown, LogOut, LogIn, Shield, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -109,6 +109,9 @@ const Navbar = () => {
                       <div className="text-xs text-muted-foreground truncate">{user.email}</div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate("/my-list")}>
+                      <Heart className="w-4 h-4 mr-2" /> My List
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <DropdownMenuItem onClick={() => navigate("/admin")}>
                         <Shield className="w-4 h-4 mr-2" /> Admin Panel

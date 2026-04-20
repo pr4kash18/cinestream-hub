@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
       movies: {
         Row: {
           backdrop_url: string | null
@@ -33,6 +57,7 @@ export type Database = {
           trailer_url: string | null
           type: string
           video_url: string | null
+          video_urls: Json
           views: number | null
           year: number | null
         }
@@ -54,6 +79,7 @@ export type Database = {
           trailer_url?: string | null
           type?: string
           video_url?: string | null
+          video_urls?: Json
           views?: number | null
           year?: number | null
         }
@@ -75,6 +101,7 @@ export type Database = {
           trailer_url?: string | null
           type?: string
           video_url?: string | null
+          video_urls?: Json
           views?: number | null
           year?: number | null
         }

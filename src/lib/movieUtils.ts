@@ -19,4 +19,6 @@ export const dbToMovie = (m: DbMovie): Movie => ({
   trailerUrl: m.trailer_url || undefined,
   views: m.views || 0,
   likes: m.likes || 0,
+  videoUrl: m.video_url || undefined,
+  videoUrls: (m.video_urls as Record<string, string> | null) || {},
 });
