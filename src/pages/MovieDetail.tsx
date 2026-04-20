@@ -186,6 +186,34 @@ const MovieDetail = () => {
           <MovieSlider title="You Might Also Like" movies={relatedMovies} />
         </div>
       )}
+
+      <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Download {movie.title}</DialogTitle>
+            <DialogDescription>Choose a quality to save this movie to your device.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 mt-2">
+            {(availableQualities.length ? availableQualities : movie.quality).map((q) => {
+              const has = !!(videoUrls[q] || fallbackUrl);
+              return (
+                <button
+                  key={q}
+                  onClick={() => triggerDownload(q)}
+                  disabled={!has}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg bg-secondary hover:bg-accent disabled:opacity-40 transition-colors"
+                >
+                  <span className="flex items-center gap-2 font-semibold text-sm">
+                    <Monitor className="w-4 h-4" /> {q}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{has ? "Download →" : "Not available"}</span>
+                </button>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
