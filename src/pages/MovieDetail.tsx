@@ -51,6 +51,29 @@ const MovieDetail = () => {
     .filter((m) => m.id !== movie.id && (m.genre || []).some((g) => movie.genres.includes(g)))
     .map(dbToMovie);
 
+  const isIn = !!watchlistIds?.has(movie.id);
+  const videoUrls = (movie.videoUrls || {}) as Record<string, string>;
+  const availableQualities = movie.quality.filter((q) => videoUrls[q]);
+  const fallbackUrl = movie.videoUrl;
+
+  const triggerDownload = (q: string) => {
+    const url = videoUrls[q] || fallbackUrl;
+    if (!url) {
+      toast.error("This movie has no downloadable file yet.");
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${movie.title} [${q}]`;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setDownloadOpen(false);
+    toast.success(`Downloading ${q}...`);
+  };
+
   const formatViews = (n: number) =>
     n >= 1000000 ? `${(n / 1000000).toFixed(1)}M` : `${(n / 1000).toFixed(0)}K`;
 
