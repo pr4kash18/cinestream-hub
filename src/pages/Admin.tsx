@@ -5,8 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMovies, type DbMovie } from "@/hooks/useMovies";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Crown, Tv, Link2, Upload } from "lucide-react";
+import { Loader2, Plus, Trash2, Crown, Tv, Link2, Upload, BarChart3, Inbox } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminInbox from "@/components/admin/AdminInbox";
 
 type AssetMode = "url" | "upload";
 
