@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import VideoPlayer from "@/components/VideoPlayer";
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -23,6 +24,7 @@ const MovieDetail = () => {
   const toggle = useToggleWatchlist();
   const [selectedQuality, setSelectedQuality] = useState("1080p");
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -55,6 +57,26 @@ const MovieDetail = () => {
   const videoUrls = (movie.videoUrls || {}) as Record<string, string>;
   const availableQualities = movie.quality.filter((q) => videoUrls[q]);
   const fallbackUrl = movie.videoUrl;
+
+  const requirePremium = () => {
+    if (movie.isPremium) {
+      // free users (no active subscription) → upsell
+      toast.info("This is a premium title. Upgrade to watch.");
+      navigate("/premium");
+      return true;
+    }
+    return false;
+  };
+
+  const handleWatch = () => {
+    if (movie.isPremium && requirePremium()) return;
+    setPlayerOpen(true);
+  };
+
+  const handleDownloadClick = () => {
+    if (movie.isPremium && requirePremium()) return;
+    setDownloadOpen(true);
+  };
 
   const triggerDownload = (q: string) => {
     const url = videoUrls[q] || fallbackUrl;
@@ -132,10 +154,10 @@ const MovieDetail = () => {
             </div>
 
             <div className="flex flex-wrap gap-3 mb-8">
-              <button className="inline-flex items-center gap-2 px-8 py-3 rounded-lg gradient-cinematic text-primary-foreground font-semibold shadow-glow hover:opacity-90 transition-opacity">
+              <button onClick={handleWatch} className="inline-flex items-center gap-2 px-8 py-3 rounded-lg gradient-cinematic text-primary-foreground font-semibold shadow-glow hover:opacity-90 transition-opacity">
                 <Play className="w-5 h-5 fill-current" /> Watch Now
               </button>
-              <button onClick={() => setDownloadOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
+              <button onClick={handleDownloadClick} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg glass font-semibold hover:bg-secondary/50 transition-colors">
                 <Download className="w-5 h-5" /> Download
               </button>
               <button
@@ -213,6 +235,16 @@ const MovieDetail = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <VideoPlayer
+        open={playerOpen}
+        onClose={() => setPlayerOpen(false)}
+        title={movie.title}
+        videoUrls={videoUrls}
+        fallbackUrl={fallbackUrl}
+        qualities={movie.quality}
+        initialQuality={selectedQuality}
+      />
 
       <Footer />
     </div>
