@@ -93,48 +93,6 @@ All sensitive tables enforce RLS — users only see their own data; admins are i
 
 ---
 
-## 🚀 Local Development
-
-> CineStream is a Lovable project — most contributors edit it through the Lovable visual editor. These instructions are for developers who want to run it locally.
-
-### Prerequisites
-- **Node.js 18+** or **Bun**
-- A connected **Lovable Cloud** project (database + auth + storage are managed automatically)
-
-### Setup
-```bash
-# Install dependencies
-bun install
-# or
-npm install
-
-# Start the dev server
-bun run dev
-# or
-npm run dev
-```
-
-The app runs at `http://localhost:5173` by default.
-
-### Available scripts
-| Command           | What it does                          |
-| ----------------- | ------------------------------------- |
-| `bun run dev`     | Start Vite dev server                 |
-| `bun run build`   | Production build                      |
-| `bun run preview` | Preview the production build locally  |
-| `bun run lint`    | Run ESLint                            |
-| `bun run test`    | Run Vitest                            |
-
-### Environment variables
-The `.env` file is auto-managed by Lovable Cloud and contains:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
-- `VITE_SUPABASE_PROJECT_ID`
-
-Do **not** edit `.env` manually — it regenerates on every deploy.
-
----
-
 ## 🗂 Project Structure
 
 ```
