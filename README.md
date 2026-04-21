@@ -18,7 +18,7 @@
 - 🎬 **Movie detail pages** — Cast, director, rating, related titles, share & comment scaffolding
 - 📨 **Contact form** — Validated submissions delivered to admin inbox
 
-### For admins (hidden `/admin` route, locked to `cpchoubisa18@gmail.com`)
+### For admins
 - 📊 **Dashboard** — Live stats: total movies, free vs premium split, total views/likes, average rating, watchlist saves, contact message count
 - 🏆 **Top 10 most viewed** — Real-time popularity leaderboard
 - ➕ **Add movies** — Upload thumbnails, backdrops, and per-quality video files directly from local storage *or* paste URLs (works with Drive share links, CDNs, etc.)
