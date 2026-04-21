@@ -165,7 +165,7 @@ const Admin = () => {
             className="w-full text-xs text-muted-foreground file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-primary file:text-primary-foreground file:text-xs file:font-semibold hover:file:opacity-90"
           />
           {uploading === field && <p className="text-xs text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" />Uploading...</p>}
-          {form[field] && uploading !== field && <p className="text-xs text-green-500 truncate">✓ {form[field]}</p>}
+          {form[field] && uploading !== field && <p className="text-xs text-primary truncate">✓ {form[field]}</p>}
         </div>
       )}
     </div>
