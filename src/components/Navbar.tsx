@@ -195,7 +195,7 @@ const Navbar = () => {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden glass-heavy border-t border-border animate-fade-in">
+        <div className="md:hidden bg-background/98 backdrop-blur-xl border-t border-border animate-fade-in">
           <div className="px-4 py-3 space-y-2">
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Home</Link>
             <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Browse</Link>
