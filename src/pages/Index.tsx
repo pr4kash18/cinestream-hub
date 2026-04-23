@@ -32,7 +32,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {heroMovie && <HeroBanner movie={heroMovie} />}
-      <div className="-mt-16 relative z-10">
+      <div className="relative z-10 pt-4 pb-8 space-y-2">
         {trending && <MovieSlider title="🔥 Trending Now" movies={trending.map(dbToMovie)} accent />}
         {newReleases && <MovieSlider title="New Releases" movies={newReleases.map(dbToMovie)} />}
         {freeMovies && <MovieSlider title="Free to Watch" movies={freeMovies.map(dbToMovie)} />}
