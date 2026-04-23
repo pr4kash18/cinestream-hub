@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-type Mode = "login" | "signup";
+type Mode = "login" | "signup" | "forgot" | "reset";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,12 +15,22 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRecovery, setIsRecovery] = useState(false);
+
+  // Detect password recovery link (Supabase appends type=recovery in the URL hash)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes("type=recovery")) {
+      setIsRecovery(true);
+      setMode("reset");
+    }
+  }, []);
 
   useEffect(() => {
-    if (user) navigate("/");
-  }, [user, navigate]);
+    if (user && !isRecovery) navigate("/");
+  }, [user, navigate, isRecovery]);
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -36,18 +46,42 @@ const Auth = () => {
         if (error) throw error;
         toast.success("Account created! You can now sign in.");
         setMode("login");
-      } else {
+      } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
         navigate("/");
+      } else if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+        if (error) throw error;
+        toast.success("Password reset link sent! Check your email.");
+        setMode("login");
+      } else if (mode === "reset") {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        toast.success("Password updated! Please sign in.");
+        await supabase.auth.signOut();
+        setIsRecovery(false);
+        window.location.hash = "";
+        setMode("login");
+        setPassword("");
       }
     } catch (err: any) {
-      toast.error(err.message || "Authentication failed");
+      toast.error(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
+
+  const titles: Record<Mode, { h: string; p: string; cta: string }> = {
+    login: { h: "Welcome back", p: "Sign in to continue", cta: "Sign in" },
+    signup: { h: "Create account", p: "Join CineStream today", cta: "Create account" },
+    forgot: { h: "Forgot password", p: "We'll email you a reset link", cta: "Send reset link" },
+    reset: { h: "Set new password", p: "Choose a strong new password", cta: "Update password" },
+  };
+  const t = titles[mode];
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -55,14 +89,10 @@ const Auth = () => {
         <Link to="/" className="block text-center mb-8">
           <span className="text-2xl font-extrabold text-gradient">CINESTREAM</span>
         </Link>
-        <h1 className="text-2xl font-bold mb-1 text-center">
-          {mode === "login" ? "Welcome back" : "Create account"}
-        </h1>
-        <p className="text-sm text-muted-foreground mb-6 text-center">
-          {mode === "login" ? "Sign in to continue" : "Join CineStream today"}
-        </p>
+        <h1 className="text-2xl font-bold mb-1 text-center">{t.h}</h1>
+        <p className="text-sm text-muted-foreground mb-6 text-center">{t.p}</p>
 
-        <form onSubmit={handleEmailAuth} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {mode === "signup" && (
             <input
               type="text"
@@ -73,42 +103,85 @@ const Auth = () => {
               className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             />
           )}
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            minLength={6}
-            className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-          />
+          {mode !== "reset" && (
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          )}
+          {(mode === "login" || mode === "signup" || mode === "reset") && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === "reset" ? "New password" : "Password"}
+              required
+              minLength={6}
+              className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          )}
+
+          {mode === "login" && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => setMode("forgot")}
+                className="text-xs text-primary hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
             className="w-full py-2.5 rounded-lg gradient-cinematic text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {mode === "login" ? "Sign in" : "Create account"}
+            {t.cta}
           </button>
         </form>
 
-        <p className="text-xs text-muted-foreground text-center mt-5">
-          {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
-            className="text-primary hover:underline font-medium"
-          >
-            {mode === "login" ? "Sign up" : "Sign in"}
-          </button>
-        </p>
+        {mode !== "reset" && (
+          <p className="text-xs text-muted-foreground text-center mt-5">
+            {mode === "forgot" ? (
+              <>
+                Remembered your password?{" "}
+                <button
+                  onClick={() => setMode("login")}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign in
+                </button>
+              </>
+            ) : mode === "login" ? (
+              <>
+                Don't have an account?{" "}
+                <button
+                  onClick={() => setMode("signup")}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => setMode("login")}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+          </p>
+        )}
       </div>
     </div>
   );
