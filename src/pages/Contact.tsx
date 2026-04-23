@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Loader2 } from "lucide-react";
+import { Mail, Loader2, Linkedin, Github, Instagram } from "lucide-react";
 import { z } from "zod";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -56,11 +56,43 @@ const Contact = () => {
       <Navbar />
       <div className="pt-24 px-4 sm:px-8 lg:px-16 max-w-[800px] mx-auto pb-16">
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-6">Contact Us</h1>
-        <div className="glass rounded-xl p-6 mb-10 text-center">
+        <div className="glass rounded-xl p-6 mb-6 text-center">
           <Mail className="w-7 h-7 mx-auto mb-3 text-primary" />
           <h3 className="font-semibold text-base mb-1">Email</h3>
           <a href="mailto:cpchoubisa18@gmail.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             cpchoubisa18@gmail.com
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          <a
+            href="https://www.linkedin.com/in/chandra-prakash-choubisa-0526653b7/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass rounded-xl p-5 text-center hover:border-primary/50 transition-colors group"
+          >
+            <Linkedin className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <h3 className="font-semibold text-sm mb-0.5">LinkedIn</h3>
+            <p className="text-xs text-muted-foreground group-hover:text-primary transition-colors">Connect</p>
+          </a>
+          <a
+            href="https://www.github.com/pr4kash18"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass rounded-xl p-5 text-center hover:border-primary/50 transition-colors group"
+          >
+            <Github className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <h3 className="font-semibold text-sm mb-0.5">GitHub</h3>
+            <p className="text-xs text-muted-foreground group-hover:text-primary transition-colors">@pr4kash18</p>
+          </a>
+          <a
+            href="https://www.instagram.com/chandra.pr4kash"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass rounded-xl p-5 text-center hover:border-primary/50 transition-colors group"
+          >
+            <Instagram className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <h3 className="font-semibold text-sm mb-0.5">Instagram</h3>
+            <p className="text-xs text-muted-foreground group-hover:text-primary transition-colors">@chandra.pr4kash</p>
           </a>
         </div>
         <div className="glass rounded-xl p-6">
