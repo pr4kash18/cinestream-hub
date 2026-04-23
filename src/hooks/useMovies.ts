@@ -63,7 +63,12 @@ export const useTrendingMovies = () =>
   useQuery({
     queryKey: ["movies", "trending"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("movies").select("*").gt("views", 1000000).order("views", { ascending: false });
+      // Top viewed movies (graceful fallback when catalog is small)
+      const { data, error } = await supabase
+        .from("movies")
+        .select("*")
+        .order("views", { ascending: false })
+        .limit(20);
       if (error) throw error;
       return (data as DbMovie[]) || [];
     },
@@ -73,7 +78,13 @@ export const useNewReleases = () =>
   useQuery({
     queryKey: ["movies", "new"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("movies").select("*").eq("year", 2024).order("created_at", { ascending: false });
+      // Newest by release year, then most recently added
+      const { data, error } = await supabase
+        .from("movies")
+        .select("*")
+        .order("year", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(20);
       if (error) throw error;
       return (data as DbMovie[]) || [];
     },

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Bell, User, Menu, X, Crown, LogOut, LogIn, Shield, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -16,8 +16,28 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
+
+  // Make navbar solid once user scrolls (prevents underlying content
+  // from bleeding through the glass background).
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setSearchOpen(false);
+  }, [location.pathname]);
+
+  const isActive = (path: string) =>
+    path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,21 +56,54 @@ const Navbar = () => {
 
   const initial = (user?.user_metadata?.full_name || user?.email || "U").charAt(0).toUpperCase();
 
+  const navItems: { to: string; label: string; gold?: boolean; icon?: JSX.Element }[] = [
+    { to: "/", label: "Home" },
+    { to: "/browse", label: "Browse" },
+    { to: "/free", label: "Free" },
+    { to: "/premium", label: "Premium", gold: true, icon: <Crown className="w-3.5 h-3.5" /> },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-heavy">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-card"
+          : "bg-background/70 backdrop-blur-lg border-b border-border/40"
+      }`}
+    >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-2xl font-extrabold text-gradient tracking-tight">CINESTREAM</span>
+          <Link to="/" className="flex items-center gap-2 shrink-0 group">
+            <span className="text-2xl font-extrabold text-gradient tracking-tight transition-transform group-hover:scale-105">
+              CINESTREAM
+            </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Home</Link>
-            <Link to="/browse" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Browse</Link>
-            <Link to="/free" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Free</Link>
-            <Link to="/premium" className="text-sm font-medium text-gold hover:text-gold/80 transition-colors flex items-center gap-1">
-              <Crown className="w-3.5 h-3.5" /> Premium
-            </Link>
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const active = isActive(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`relative px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
+                    item.gold
+                      ? active
+                        ? "text-gold"
+                        : "text-gold/80 hover:text-gold"
+                      : active
+                        ? "text-foreground"
+                        : "text-foreground/70 hover:text-foreground"
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                  {active && (
+                    <span className={`absolute left-2 right-2 -bottom-0.5 h-0.5 rounded-full ${item.gold ? "bg-gold" : "gradient-cinematic"}`} />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">
@@ -142,7 +195,7 @@ const Navbar = () => {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden glass-heavy border-t border-border animate-fade-in">
+        <div className="md:hidden bg-background/98 backdrop-blur-xl border-t border-border animate-fade-in">
           <div className="px-4 py-3 space-y-2">
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Home</Link>
             <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sm text-foreground/80 hover:text-foreground">Browse</Link>
