@@ -2,21 +2,21 @@
 
 **A modern, full-featured movie streaming platform** — discover, watch, download, and manage movies with a Netflix-grade experience. Built with React, TypeScript, Tailwind CSS, and Lovable Cloud.
 
-🌐 **Live preview:** https://id-preview--949c0909-8e4b-4ed7-8953-f7d30254b0aa.lovable.app
-
 ---
 
 ## ✨ Features
 
 ### For viewers
-- 🔐 **Secure authentication** — Email/password and Google OAuth sign-in
+- 🔐 **Secure authentication** — Email + password sign-in with full forgot-password / reset flow
 - 🎞 **Browse & search** — Rich filter bar (genre, year, rating, language, quality, free/premium) with multiple sort options
 - ▶️ **Inline video player** — Custom HTML5 player with play/pause, seek, mute, fullscreen, keyboard shortcuts, and live quality switching (1080p / 720p / 480p)
 - ⬇️ **Multi-quality downloads** — Pick a quality, save the file straight to your device
 - ❤️ **Personal watchlist** — Save favorites to `My List` with one click
 - 👑 **Premium tier gating** — Premium-only titles upsell free users to the pricing page
 - 🎬 **Movie detail pages** — Cast, director, rating, related titles, share & comment scaffolding
-- 📨 **Contact form** — Validated submissions delivered to admin inbox
+- 📨 **Contact form** — Validated submissions delivered to the admin inbox
+- 📱 **Fully responsive** — Looks great on phones, tablets, and desktops
+- 🧭 **Sticky, adaptive navbar** — Translucent over hero artwork, opaque while scrolling
 
 ### For admins
 - 📊 **Dashboard** — Live stats: total movies, free vs premium split, total views/likes, average rating, watchlist saves, contact message count
@@ -66,10 +66,10 @@ It ships everything needed to launch — auth, content management, payments scaf
 
 ### Backend (Lovable Cloud — managed Postgres + Auth + Storage)
 - 🗄 **PostgreSQL** with Row-Level Security (RLS) on every user-scoped table
-- 🔐 **Supabase Auth** — Email/password + Google OAuth
-- 📦 **Supabase Storage** — Three buckets: `movie-thumbnails`, `movie-backdrops`, `movie-videos`
+- 🔐 **Email + password authentication** with secure password recovery emails
+- 📦 **Object storage** — Three buckets: `movie-thumbnails`, `movie-backdrops`, `movie-videos`
 - ⚙️ **Edge Functions** — Serverless functions (Deno runtime) for transactional emails and admin operations
-- 🛡 **Role-based access** — Admin gating via the `is_admin_email()` SECURITY DEFINER function and a separate `user_roles` table
+- 🛡 **Role-based access** — Admin gating via a SECURITY DEFINER function and a separate `user_roles` table
 
 ### Tooling
 - 🧪 **Vitest** + Testing Library — Unit testing
@@ -89,7 +89,7 @@ It ships everything needed to launch — auth, content management, payments scaf
 | `watchlist`         | Movies a user has saved to "My List"                             |
 | `contact_messages`  | Public contact form submissions (admins read; anyone can submit) |
 
-All sensitive tables enforce RLS — users only see their own data; admins are identified server-side via email match or role check.
+All sensitive tables enforce RLS — users only see their own data; admins are identified server-side.
 
 ---
 
@@ -104,7 +104,7 @@ src/
 │   ├── HeroBanner.tsx
 │   ├── MovieCard.tsx
 │   ├── MovieSlider.tsx
-│   ├── Navbar.tsx
+│   ├── Navbar.tsx        # Adaptive (translucent → solid on scroll) navbar
 │   ├── Footer.tsx
 │   └── VideoPlayer.tsx   # Custom HTML5 player with quality switcher
 ├── pages/                # Route components
@@ -115,7 +115,7 @@ src/
 │   ├── Genre.tsx
 │   ├── Free.tsx / Premium.tsx
 │   ├── MyList.tsx        # Watchlist
-│   ├── Auth.tsx          # Sign in / sign up
+│   ├── Auth.tsx          # Sign in / sign up / forgot / reset password
 │   ├── Admin.tsx         # Hidden admin panel
 │   ├── Contact.tsx
 │   ├── Privacy.tsx / Terms.tsx
@@ -131,6 +131,8 @@ src/
 supabase/
 ├── functions/            # Edge functions (Deno)
 └── migrations/           # SQL migrations
+
+vercel.json               # SPA fallback so deep links work after refresh
 ```
 
 ---
@@ -138,9 +140,9 @@ supabase/
 ## 🔐 Security Model
 
 - **RLS-first**: Every user-scoped table has explicit RLS policies — users can only read/write their own rows
-- **Admin separation**: The `is_admin_email()` Postgres function (SECURITY DEFINER) checks the authenticated user's email server-side; admin checks are never trusted from the client
-- **No secrets in the client**: The publishable Supabase key is the only key shipped to the browser; service role key lives only in edge functions
-- **Validated inputs**: All forms validated client-side with Zod *and* server-side via RLS check constraints
+- **Admin separation**: Admin checks happen server-side via a SECURITY DEFINER function; admin status is never trusted from the client
+- **No secrets in the client**: Only the publishable Supabase key is shipped to the browser; the service role key lives only in edge functions
+- **Validated inputs**: All forms validated client-side with Zod *and* enforced server-side via RLS and check constraints
 - **Secure file uploads**: Storage buckets restricted by RLS — only admins can upload videos/thumbnails
 
 ---
@@ -153,18 +155,47 @@ CineStream uses a **fully tokenized design system** — all colors, gradients, s
 - 💎 **Glassmorphism** surfaces (`.glass` utility)
 - 🌈 **Cinematic gradient** accents on CTAs
 - ✨ **Smooth animations** for fade-in, fade-up, hover lifts
+- 📐 **Active-route indicators** in the navbar with animated underline
 
 ---
 
 ## 🚢 Deployment
 
-This project is built with [Lovable](https://lovable.dev). To publish:
+This project is built with [Lovable](https://lovable.dev) and is deployment-friendly on any static host (Vercel, Netlify, Cloudflare Pages, etc.).
 
+### Vercel (recommended)
+1. Push the repo to GitHub
+2. Import the project on Vercel
+3. Vercel auto-detects Vite — no extra config needed
+4. The included `vercel.json` rewrites all routes to `index.html`, so deep links like `/browse` or `/movie/:id` survive a hard refresh
+
+### Lovable
 1. Open the project in Lovable
 2. Click **Publish** in the top-right
 3. Optionally add a custom domain in **Project Settings → Domains**
 
-Production builds are deployed automatically — no CI configuration needed.
+Production builds are deployed automatically on every push — no CI configuration needed.
+
+---
+
+## 🧪 Local development
+
+```bash
+# install dependencies (bun is fastest, but npm/pnpm/yarn also work)
+bun install
+
+# start dev server
+bun run dev
+
+# type-check
+npx tsc --noEmit
+
+# production build
+bun run build
+
+# run tests
+bun run test
+```
 
 ---
 
@@ -183,10 +214,6 @@ Future enhancements being considered:
 ---
 
 ## 📬 Contact
-
-For questions, feedback, or collaboration:
-
-📧 **cpchoubisa18@gmail.com**
 
 Use the in-app contact form (`/contact`) — submissions land directly in the admin inbox at `/admin → Inbox`.
 
